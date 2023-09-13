@@ -1,6 +1,7 @@
 import GameManager from "./game-manager.js";
 import Square from "./square.js";
-import Polyomino from "./polyomino.js";
+import TetrominoFactory from "./tetromino-factory.js";
+import Tetromino from "./tetromino-factory.js";
 
 export default class Arena {
     constructor() {
@@ -14,16 +15,7 @@ export default class Arena {
         }
         this._squares = [...Array(this._columns)].map(()=>[...Array(this._lines)]);
 
-        this.currentPiece = new Polyomino(
-            4,
-            "#0000ff25",
-            [
-                [0, 0, 0, 0],
-                [0, 1, 1, 0],
-                [0, 1, 1, 0],
-                [0, 0, 0, 0]
-            ]
-        );
+        this.currentPiece = new TetrominoFactory().getTetromino();
     }
 
     draw() {
