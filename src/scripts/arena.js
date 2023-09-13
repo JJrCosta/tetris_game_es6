@@ -1,4 +1,6 @@
 import GameManager from "./game-manager.js";
+import Square from "./square.js";
+import Polyomino from "./polyomino.js";
 
 export default class Arena {
     constructor() {
@@ -10,12 +12,27 @@ export default class Arena {
             top: (GameManager.config.height - this._height)/2,
             left: (GameManager.config.width - this._width)/2
         }
+        this._squares = [...Array(this._columns)].map(()=>[...Array(this._lines)]);
+
+        this.currentPiece = new Polyomino(
+            4,
+            "#0000ff25",
+            [
+                [0, 0, 0, 0],
+                [0, 1, 1, 0],
+                [0, 1, 1, 0],
+                [0, 0, 0, 0]
+            ]
+        );
     }
+
     draw() {
         this._drawBorder();
-        //_drawSquares();
+        this._drawSquares();
         this._drawGrid();
+        this.currentPiece.draw(3, 5)
     }
+
     _drawBorder() {
         GameManager.context.strokeStyle = "#000000";
         GameManager.context.strokeRect(
@@ -25,6 +42,20 @@ export default class Arena {
             this._height
         )
     }
+
+    _drawSquares() {
+        for (let i = 0; i < this._columns; i++) {
+            for (let j = 0; j < this._lines; j++) {
+                if (this._squares[i][j]) {
+                    this._squares[i][j].draw(
+                        this.position.left + i * GameManager.config.squareSize,
+                        this.position.top + j * GameManager.config.squareSize
+                    );
+                }
+            }
+        }
+    }
+
     _drawGrid() {
         GameManager.context.strokeStyle = "#aaa";
         GameManager.context.beginPath();
