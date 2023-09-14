@@ -59,52 +59,61 @@ export default class Polyomino {
             }
         }
     }
-
-    tryMoveLeft() {
-        let copy = this.clone();
-        copy.position.x--;
-
-        for (let i = 0; i < this._squaresCount; i++) {
-            for (let j = 0; j < this._squaresCount; j++) {
-                if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
+    
+    _validade(copy) {
+        for (let i = 0; i < copy._squaresCount; i++) {
+            for (let j = 0; j < copy._squaresCount; j++) {
+                if (copy._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
                     return false;
                 }
             }
         }
+        return true
+    }
 
-        this.position.x--;
+    _tryMove(moveFn) {
+        let copy = this.clone();
+        moveFn(copy);
+        
+        if(!this._validade(copy)) {
+            return false;
+        }
+        moveFn(this);
+        
         return true;
+    }
+
+    tryMoveLeft() {
+        return this._tryMove(obj => obj.position.x--);
     }
 
     tryMoveRight() {
-        let copy = this.clone();
-        copy.position.x++;
-
-        for (let i = 0; i < this._squaresCount; i++) {
-            for (let j = 0; j < this._squaresCount; j++) {
-                if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
-                    return false;
-                }
-            }
-        }
-
-        this.position.x++;
-        return true;
+        return this._tryMove(obj => obj.position.x++);
     }
 
     tryMoveDown() {
+        return this._tryMove(obj => obj.position.y++);
+    }
+
+    tryRotateAntiClockwise() {
         let copy = this.clone();
-        copy.position.y++;
 
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
-                if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
-                    return false;
-                }
+                copy._squares[i][j] = this._squares[this._squaresCount - j - 1][i];
             }
         }
 
-        this.position.y++;
+        if(!this._validade(copy)) {
+            return false;
+        }
+
+        for (let i = 0; i < this._squaresCount; i++) {
+            for (let j = 0; j < this._squaresCount; j++) {
+                this._squares[i][j] = copy._squares[i][j];
+            }
+        }
+
         return true;
     }
 }

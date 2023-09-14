@@ -6,13 +6,16 @@ export default class InputHandler {
     }
     onKeyDown(e) {
         switch (e.code) {
-            case 'KeyA':
+            case 'ArrowUp':
+                GameManager.arena.currentPiece.tryRotateAntiClockwise();
+                break;
+            case 'ArrowLeft':
                 GameManager.arena.currentPiece.tryMoveLeft();
                 break;
-            case 'KeyS':
+            case 'ArrowDown':
                 GameManager.arena.currentPiece.tryMoveDown();
                 break;
-            case 'KeyD':
+            case 'ArrowRight':
                 GameManager.arena.currentPiece.tryMoveRight();
                 break;
             case 'Space':
