@@ -1,4 +1,5 @@
 import Arena from './arena.js';
+import InputHandler from './input-handler.js';
 
 export default class GameManager {
     static start(config) {
@@ -12,6 +13,7 @@ export default class GameManager {
         canvas.height = GameManager.config.height;
         GameManager.context = canvas.getContext("2d");
         GameManager.arena = new Arena();
+        GameManager.inputHandler = new InputHandler;
         GameManager._draw();
     }
 

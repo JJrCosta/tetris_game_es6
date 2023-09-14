@@ -21,8 +21,23 @@ export default class Arena {
 
     _currentPieceFall() {
         if (!GameManager.arena.currentPiece.tryMoveDown()) {
+            GameManager.arena.currentPiece.mergeToArena();
             GameManager.arena.currentPiece = new TetrominoFactory().getTetromino().setPosition(1 ,3);
         }
+    }
+
+    isOutsideBoundaries(i, j, piece) {
+        return (piece.position.y + j) >= this._lines
+            || (piece.position.x + i) >= this._columns
+            || (piece.position.x + i) < 0;
+    }
+
+    conflicts(i, j, piece) {
+        return this._squares[piece.position.x + i][piece.position.y + j];
+    }
+
+    setSquare(i, j, square) {
+        this._squares[i][j] = square;
     }
 
     draw() {
