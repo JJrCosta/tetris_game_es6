@@ -13,7 +13,7 @@ export default class Arena {
             top: (GameManager.config.height - this._height)/2,
             left: (GameManager.config.width - this._width)/2
         }
-        this._squares = [...Array(this._columns)].map(()=>[...Array(this._lines)]);
+        this._squares = [...Array(this._lines)].map(()=>[...Array(this._columns)]);
 
         this.currentPiece = new TetrominoFactory().getTetromino().setPosition(1 ,3);
         this._currentPieceFallInterval = setInterval(this._currentPieceFall, 1000);
@@ -22,6 +22,7 @@ export default class Arena {
     _currentPieceFall() {
         if (!GameManager.arena.currentPiece.tryMoveDown()) {
             GameManager.arena.currentPiece.mergeToArena();
+            GameManager.arena.removeCompletedLines();
             GameManager.arena.currentPiece = new TetrominoFactory().getTetromino().setPosition(1 ,3);
         }
     }
@@ -33,7 +34,7 @@ export default class Arena {
     }
 
     conflicts(i, j, piece) {
-        return this._squares[piece.position.x + i][piece.position.y + j];
+        return this._squares[piece.position.y + j][piece.position.x + i];
     }
 
     setSquare(i, j, square) {
@@ -58,12 +59,12 @@ export default class Arena {
     }
 
     _drawSquares() {
-        for (let i = 0; i < this._columns; i++) {
-            for (let j = 0; j < this._lines; j++) {
+        for (let i = 0; i < this._lines; i++) {
+            for (let j = 0; j < this._columns; j++) {
                 if (this._squares[i][j]) {
                     this._squares[i][j].draw(
-                        this.position.left + i * GameManager.config.squareSize,
-                        this.position.top + j * GameManager.config.squareSize
+                        this.position.left + j * GameManager.config.squareSize,
+                        this.position.top + i * GameManager.config.squareSize
                     );
                 }
             }
@@ -82,5 +83,37 @@ export default class Arena {
             GameManager.context.lineTo(this.position.left + GameManager.config.squareSize * i, this.position.top + this._height);
         }
         GameManager.context.stroke();
+    }
+
+    removeCompletedLines() {
+        let completedLines = [];
+
+        for (let i = 0; i < this._lines; i++) {
+            let completed = true;
+            for (let j = 0; j < this._columns; j++) {
+                if(!this._squares[i][j]) {
+                    completed = false;
+                    break;
+                }
+            }
+
+            if(completed) {
+                completedLines.push(i);
+            }
+        }
+
+        if (completedLines.length == 0) {
+            return 0;
+        }
+
+        for (let i = completedLines.length - 1; i >= 0; i--)  {
+            this._squares.splice(completedLines[i], 1);
+        }
+
+        for (let i = 0; i < completedLines.length; i++)  {
+            this._squares.unshift([...Array(this._columns)]);
+        }
+
+        return completedLines.length;
     }
 }
