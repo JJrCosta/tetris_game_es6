@@ -1,7 +1,4 @@
 import GameManager from "./game-manager.js";
-import Square from "./square.js";
-import TetrominoFactory from "./tetromino-factory.js";
-import Tetromino from "./tetromino-factory.js";
 
 export default class Arena {
     constructor() {
@@ -15,7 +12,7 @@ export default class Arena {
         }
         this._squares = [...Array(this._lines)].map(()=>[...Array(this._columns)]);
 
-        this.currentPiece = new TetrominoFactory().getTetromino().setPosition(1 ,3);
+        this.currentPiece = GameManager.tetrominoFactory.getTetromino().setPosition(1 ,3);
         this._currentPieceFallInterval = setInterval(this._currentPieceFall, 1000);
     }
 
@@ -23,7 +20,7 @@ export default class Arena {
         if (!GameManager.arena.currentPiece.tryMoveDown()) {
             GameManager.arena.currentPiece.mergeToArena();
             GameManager.arena.removeCompletedLines();
-            GameManager.arena.currentPiece = new TetrominoFactory().getTetromino().setPosition(1 ,3);
+            GameManager.arena.currentPiece = GameManager.nextPieceQueue.pop().setPosition(1 ,3);
         }
     }
 

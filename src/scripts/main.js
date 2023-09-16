@@ -5,7 +5,8 @@ const config = {
     height: 540,
     columns: 10,
     lines: 20,
-    squareSize: 25
+    squareSize: 25,
+    nextPieceQueueSize: 3
 };
 
 GameManager.start(config);
